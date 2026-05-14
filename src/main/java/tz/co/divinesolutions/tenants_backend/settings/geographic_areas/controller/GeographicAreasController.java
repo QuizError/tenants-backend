@@ -25,7 +25,7 @@ public class GeographicAreasController {
         return countryService.listAllCountries();
     }
 
-    @GetMapping("/seed-districts/{uid}")
+    @GetMapping("/seed-districts/{regionUid}")
     public Response<AreaData> seedRegionDistrict(@PathVariable UUID uid){
         try {
             return geographicAreasService.seedRegionDistrict(uid);
@@ -40,7 +40,7 @@ public class GeographicAreasController {
         }
     }
 
-    @GetMapping("/seed-wards/{uid}")
+    @GetMapping("/seed-wards/{districtUid}")
     public Response<AreaData> seedDistrictWards(@PathVariable UUID uid){
         try {
             return geographicAreasService.seedDistrictWards(uid);
@@ -55,7 +55,7 @@ public class GeographicAreasController {
         }
     }
 
-    @GetMapping("/seed-villages/{uid}")
+    @GetMapping("/seed-villages/{wardUid}")
     public Response<AreaData> seedWardVillagesAndStreets(@PathVariable UUID uid){
         try {
             return geographicAreasService.seedWardVillagesAndStreets(uid);
@@ -68,6 +68,26 @@ public class GeographicAreasController {
                     "An error has occurred when seeding villages/streets kindly contact support."
             );
         }
+    }
+
+    @GetMapping("/regions")
+    public Response<AreaData> listRegions(){
+        return geographicAreasService.listRegions();
+    }
+
+    @GetMapping("/districts/{regionUid}")
+    public Response<AreaData> listDistricts(@PathVariable UUID regionUid){
+        return geographicAreasService.listDistricts(regionUid);
+    }
+
+    @GetMapping("/wards/{districtUid}")
+    public Response<AreaData> listWards(@PathVariable UUID districtUid){
+        return geographicAreasService.listWards(districtUid);
+    }
+
+    @GetMapping("/villages/{wardUid}")
+    public Response<AreaData> listVillages(@PathVariable UUID wardUid){
+        return geographicAreasService.listVillages(wardUid);
     }
 
 }

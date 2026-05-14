@@ -14,6 +14,14 @@ import java.util.UUID;
 public interface GeographicAreasService {
     void seedTanzaniaRegions();
 
+    Response<AreaData> listRegions();
+
+    Response<AreaData> listDistricts(UUID uid);
+
+    Response<AreaData> listWards(UUID uid);
+
+    Response<AreaData> listVillages(UUID uid);
+
     Response<AreaData> seedRegionDistrict(UUID uid);
 
     @Transactional

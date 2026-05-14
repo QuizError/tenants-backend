@@ -3,7 +3,9 @@ package tz.co.divinesolutions.tenants_backend.settings.geographic_areas.reposito
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import tz.co.divinesolutions.tenants_backend.entities.Village;
+import tz.co.divinesolutions.tenants_backend.entities.Ward;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,4 +13,5 @@ import java.util.UUID;
 public interface VillageRepository extends JpaRepository<Village,Long> {
     Optional<Village> findFirstByUid(UUID uid);
     Optional<Village> findFirstByNapaId(String napaId);
+    List<Village> findAllByWardAndActiveTrue(Ward ward);
 }

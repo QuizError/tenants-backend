@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import tz.co.divinesolutions.tenants_backend.settings.geographic_areas.dto.ConvertibleToAreaData;
 
 @Getter
 @Setter
@@ -13,8 +14,13 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "regions")
-public class Region extends BaseEntity{
+public class Region extends BaseEntity implements ConvertibleToAreaData {
     private String name;
     private String postcode;
     private String napaId;
+
+    @Override
+    public String getParentName() {
+        return "Tanzania";
+    }
 }

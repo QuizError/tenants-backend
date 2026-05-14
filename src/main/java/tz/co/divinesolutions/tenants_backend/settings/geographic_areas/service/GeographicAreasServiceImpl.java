@@ -66,6 +66,72 @@ public class GeographicAreasServiceImpl implements GeographicAreasService{
     }
 
     @Override
+    public Response<AreaData> listRegions(){
+        return new Response<>(
+                true,
+                ResponseCode.SUCCESS,
+                regionRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList()),
+                "Success"
+        );
+    }
+
+    @Override
+    public Response<AreaData> listDistricts(UUID uid){
+        Optional<Region> optionalRegion = regionRepository.findFirstByUid(uid);
+        return optionalRegion.map(region -> new Response<>(
+                true,
+                ResponseCode.SUCCESS,
+                districtRepository.findAllByRegionAndActiveTrue(region).stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList()),
+                "Success"
+        )).orElseGet(() -> new Response<>(
+                false,
+                ResponseCode.NO_RECORD_FOUND,
+                Collections.emptyList(),
+                "Region could not be found or may have been deleted from the system"
+        ));
+    }
+
+    @Override
+    public Response<AreaData> listWards(UUID uid){
+        Optional<District> optionalDistrict = districtRepository.findFirstByUid(uid);
+        return optionalDistrict.map(district -> new Response<>(
+                true,
+                ResponseCode.SUCCESS,
+                wardRepository.findAllByDistrictAndActiveTrue(district).stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList()),
+                "Success"
+        )).orElseGet(() -> new Response<>(
+                false,
+                ResponseCode.NO_RECORD_FOUND,
+                Collections.emptyList(),
+                "District could not be found or may have been deleted from the system"
+        ));
+    }
+
+    @Override
+    public Response<AreaData> listVillages(UUID uid){
+        Optional<Ward> optionalWard = wardRepository.findFirstByUid(uid);
+        return optionalWard.map(ward -> new Response<>(
+                true,
+                ResponseCode.SUCCESS,
+                villageRepository.findAllByWardAndActiveTrue(ward).stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList()),
+                "Success"
+        )).orElseGet(() -> new Response<>(
+                false,
+                ResponseCode.NO_RECORD_FOUND,
+                Collections.emptyList(),
+                "Ward could not be found or may have been deleted from the system"
+        ));
+    }
+
+    @Override
     @Transactional
     public Response<AreaData> seedRegionDistrict(UUID uid){
         List<District> districts = new ArrayList<>();
