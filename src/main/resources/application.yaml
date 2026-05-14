@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: tenants-backend
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL_AUTO}
+
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_TENANTS}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.postgresql.Driver
+
+
+logging:
+  level:
+    org:
+      hibernate: OFF
+server:
+  port: 9100
+file:
+  upload-dir: "/data/uploads/tmis/"
+app:
+  sms:
+    api:
+      secret: M2M4M2JiZjAxMTA3MzFiY2Y3Y2I3ODNmYjExZmQ5NTYzYTEwZWM5YjIzYTk2ZDA5ODYzMWZkOGZiY2MxZGQwMQ==
+      key: af63b4386584c71c
+      url: https://apisms.beem.africa/v1/send
+  jwt:
+    secret: d469757a-7a98-4a62-b199-83462fb86c93
+    access-token:
+      expiration: 900000
+    refresh-token:
+      expiration: 604800000
+napa:
+  base:
+    url: https://napa.mawasiliano.go.tz/frontend_api/api/pub
+  header:
+    key: X-Napa-Api-Key
+    value: zpORAHpl6YfJGlTROGF3Jlm9hLQ9FZPakO4wzrirQQq8LdeoMMEWLoaDIhXi8Ubz
