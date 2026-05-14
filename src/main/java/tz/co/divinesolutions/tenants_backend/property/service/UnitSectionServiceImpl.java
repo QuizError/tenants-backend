@@ -185,34 +185,34 @@ public class UnitSectionServiceImpl implements UnitSectionService{
         }
     }
 
-    @Override
-    public List<AvailableSectionDto> myAvailableUnitSections(UUID userUid){
-        List<Property> properties = propertyService.getMyProperties().getDataList();
-        if (!properties.isEmpty()){
-            List<Long> propertyIds = new ArrayList<>();
-            for (Property property: properties){
-                propertyIds.add(property.getId());
-            }
-            List<AvailableSectionDto> availableSectionDtoList = new ArrayList<>();
-            List<UnitSection> unitSections = unitSectionRepository.findAllByAvailableTrueAndPropertyIdIn(propertyIds);
-            if (!unitSections.isEmpty()){
-                for (UnitSection unitSection :  unitSections){
-                    AvailableSectionDto sectionDto  = new AvailableSectionDto();
-                    sectionDto.setAvailability(unitSection.getAvailable());
-                    sectionDto.setPrice(unitSection.getPrice());
-                    sectionDto.setName(unitSection.getName());
-                    sectionDto.setPropertyName(unitSection.getUnit().getProperty().getName());
-                    sectionDto.setLocation(unitSection.getUnit().getProperty().getLocation());
-                    sectionDto.setCurrencyUid(unitSection.getCurrency().getUid());
-                    sectionDto.setUid(unitSection.getUid());
-                    sectionDto.setUnitName(unitSection.getUnit().getName());
-                    availableSectionDtoList.add(sectionDto);
-                }
-            }
-            return availableSectionDtoList;
-        }
-        return Collections.emptyList();
-    }
+//    @Override
+//    public List<AvailableSectionDto> myAvailableUnitSections(UUID userUid){
+//        List<Property> properties = propertyService.getMyProperties().getDataList();
+//        if (!properties.isEmpty()){
+//            List<Long> propertyIds = new ArrayList<>();
+//            for (Property property: properties){
+//                propertyIds.add(property.getId());
+//            }
+//            List<AvailableSectionDto> availableSectionDtoList = new ArrayList<>();
+//            List<UnitSection> unitSections = unitSectionRepository.findAllByAvailableTrueAndPropertyIdIn(propertyIds);
+//            if (!unitSections.isEmpty()){
+//                for (UnitSection unitSection :  unitSections){
+//                    AvailableSectionDto sectionDto  = new AvailableSectionDto();
+//                    sectionDto.setAvailability(unitSection.getAvailable());
+//                    sectionDto.setPrice(unitSection.getPrice());
+//                    sectionDto.setName(unitSection.getName());
+//                    sectionDto.setPropertyName(unitSection.getUnit().getProperty().getName());
+//                    sectionDto.setLocation(unitSection.getUnit().getProperty().getLocation());
+//                    sectionDto.setCurrencyUid(unitSection.getCurrency().getUid());
+//                    sectionDto.setUid(unitSection.getUid());
+//                    sectionDto.setUnitName(unitSection.getUnit().getName());
+//                    availableSectionDtoList.add(sectionDto);
+//                }
+//            }
+//            return availableSectionDtoList;
+//        }
+//        return Collections.emptyList();
+//    }
 
     @Override
     public void changeAvailability(UnitSection unitSection){

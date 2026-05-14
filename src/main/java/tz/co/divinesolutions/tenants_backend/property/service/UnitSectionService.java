@@ -22,7 +22,7 @@ public interface UnitSectionService {
 
     List<UnitSectionDto> listAllSectionsByUnitUid(UUID unitUid);
 
-    List<AvailableSectionDto> myAvailableUnitSections(UUID userUid);
+//    List<AvailableSectionDto> myAvailableUnitSections(UUID userUid);
 
     void changeAvailability(UnitSection unitSection);
 }

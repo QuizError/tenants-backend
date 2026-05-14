@@ -20,6 +20,7 @@ public class PropertyDto {
     private Boolean notifyMeEndOfContract = false;
     private BigDecimal serviceChargeAmount;
     private UUID currencyUid;
+    private UUID streetUid;
     private String serviceChargeDescription;
     private String senderName;
     private UUID ownerUid;

@@ -43,9 +43,9 @@ public class UnitSectionController {
         return unitSectionService.listAllSectionsByUnitUid(uid);
     }
 
-    @GetMapping("/available-units/{uid}")
-    public List<AvailableSectionDto> myAvailableUnitSections(@PathVariable UUID uid){
-        return unitSectionService.myAvailableUnitSections(uid);
-    }
+//    @GetMapping("/available-units/{uid}")
+//    public List<AvailableSectionDto> myAvailableUnitSections(@PathVariable UUID uid){
+//        return unitSectionService.myAvailableUnitSections(uid);
+//    }
 
 }

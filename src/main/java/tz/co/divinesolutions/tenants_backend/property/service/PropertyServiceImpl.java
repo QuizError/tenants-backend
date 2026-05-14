@@ -2,6 +2,7 @@ package tz.co.divinesolutions.tenants_backend.property.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import tz.co.divinesolutions.tenants_backend.entities.*;
 import tz.co.divinesolutions.tenants_backend.entities.Currency;
@@ -10,9 +11,11 @@ import tz.co.divinesolutions.tenants_backend.enums.PropertyOwnershipType;
 import tz.co.divinesolutions.tenants_backend.ownership.repository.GroupOwnershipMemberRepository;
 import tz.co.divinesolutions.tenants_backend.ownership.service.GroupOwnershipService;
 import tz.co.divinesolutions.tenants_backend.property.dto.BroadcastDto;
+import tz.co.divinesolutions.tenants_backend.property.dto.PropertyData;
 import tz.co.divinesolutions.tenants_backend.property.dto.PropertyDto;
 import tz.co.divinesolutions.tenants_backend.property.repository.PropertyRepository;
 import tz.co.divinesolutions.tenants_backend.settings.currency.repository.CurrencyRepository;
+import tz.co.divinesolutions.tenants_backend.settings.geographic_areas.repository.VillageRepository;
 import tz.co.divinesolutions.tenants_backend.sms.dto.Recipient;
 import tz.co.divinesolutions.tenants_backend.sms.dto.SMSDto;
 import tz.co.divinesolutions.tenants_backend.sms.service.SMSService;
@@ -23,6 +26,7 @@ import tz.co.divinesolutions.tenants_backend.utils.LoggedUser;
 
 import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -33,12 +37,13 @@ public class PropertyServiceImpl implements PropertyService{
     private final GroupOwnershipService groupOwnershipService;
     private final PropertyRepository propertyRepository;
     private final CurrencyRepository currencyRepository;
+    private final VillageRepository villageRepository;
     private final SMSService smsService;
     private final UserAccountRepository userAccountRepository;
     private final LoggedUser loggedUser;
 
     @Override
-    public Response<Property> save(PropertyDto dto){
+    public Response<PropertyData> save(PropertyDto dto){
         try {
 
             Optional<Currency> optionalCurrency = currencyRepository.findFirstByUid(dto.getUid());
@@ -49,8 +54,24 @@ public class PropertyServiceImpl implements PropertyService{
 
             Optional<Property> optionalProperty = getOptionalByUid(dto.getUid());
             if (dto.getUid() != null && optionalProperty.isEmpty()){
-                return new Response<>(false, ResponseCode.DUPLICATE_RECORD, "Property could not be found or may have been deleted from the system", null);
+                return new Response<>(
+                        false,
+                        ResponseCode.DUPLICATE_RECORD,
+                        "Property could not be found or may have been deleted from the system",
+                        null
+                );
             }
+
+            Optional<Village> optionalVillage = villageRepository.findFirstByUid(dto.getStreetUid());
+            if (optionalVillage.isEmpty()){
+                return new Response<>(
+                        false,
+                        ResponseCode.DUPLICATE_RECORD,
+                        "Street/Village could not be found or may have been deleted from the system",
+                        null
+                );
+            }
+            Village village = optionalVillage.get();
 
             Property property = optionalProperty.orElse(new Property());
 
@@ -67,22 +88,34 @@ public class PropertyServiceImpl implements PropertyService{
             property.setHasServiceCharge(dto.getHasServiceCharge());
             property.setServiceChargeAmount(dto.getServiceChargeAmount());
             property.setCurrency(currency);
+            property.setRegionId(village.getWard().getDistrict().getRegion().getId());
+            property.setDistrictId(village.getWard().getDistrict().getId());
+            property.setWardId(village.getWard().getId());
+            property.setVillage(village);
             property.setServiceChargeDescription(dto.getServiceChargeDescription());
             property.setContactPersonEmail(dto.getContactPersonEmail());
             property.setContactPersonMobile(dto.getContactPersonMobile());
             property.setNotifyMeEndOfContract(dto.getNotifyMeEndOfContract());
             property.setSenderName(dto.getSenderName());
             property.setStartFunction(LocalDate.now());
-            property.setLocation(dto.getLocation());
             property.setOwnershipType(dto.getOwnershipType());
             property.setFunctionStatus(PropertyFunctionStatus.ACTIVE);
             Property saved = propertyRepository.save(property);
 
-            return new Response<>(true, ResponseCode.SUCCESS, "Property saved successfully", saved);
+            return new Response<>(
+                    true,
+                    ResponseCode.SUCCESS,
+                    "Property saved successfully",
+                    convertToDto(saved));
         }
         catch (Exception e){
             log.error("***** Error on saving property: {}",e.getMessage());
-            return new Response<>(true, ResponseCode.INVALID_INPUT_DATA, "Error when saving property", null);
+            return new Response<>(
+                    false,
+                    ResponseCode.INVALID_INPUT_DATA,
+                    "Error when saving property",
+                    null
+            );
         }
     }
     @Override
@@ -95,15 +128,30 @@ public class PropertyServiceImpl implements PropertyService{
         return id != null  ? propertyRepository.findById(id) : Optional.empty();
     }
     @Override
-    public List<Property> properties(){
-        return propertyRepository.findAll();
+    public Response<PropertyData> properties(){
+        return new Response<>(
+                true,
+                ResponseCode.UNAUTHORIZED,
+                propertyRepository.findAll().stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList()),
+                "Success"
+        );
     }
 
     @Override
-    public Response<Property> findByUid(UUID uid){
+    public Response<PropertyData> findByUid(UUID uid){
         try {
             Optional<Property> optionalProperty = getOptionalByUid(uid);
-            return optionalProperty.map(property -> new Response<>(true, ResponseCode.SUCCESS, "Success", property)).orElseGet(() -> new Response<>(false, ResponseCode.NO_RECORD_FOUND, "Property could not be found or may have been deleted from the system", null));
+            return optionalProperty.map(property -> new Response<>(
+                    true,
+                    ResponseCode.SUCCESS,
+                    "Success", convertToDto(property)))
+                    .orElseGet(() -> new Response<>(
+                            false,
+                            ResponseCode.NO_RECORD_FOUND,
+                            "Property could not be found or may have been deleted from the system",
+                            null));
         }
         catch (Exception e){
             log.error("***** Error on fetching Property: {}",e.getMessage());
@@ -112,7 +160,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
 
     @Override
-    public Response<Property> delete(UUID uid){
+    public Response<PropertyData> delete(UUID uid){
         try {
             Optional<Property> optionalUnit = getOptionalByUid(uid);
             if (optionalUnit.isEmpty()){
@@ -128,7 +176,7 @@ public class PropertyServiceImpl implements PropertyService{
     }
 
     @Override
-    public Response<Property> getMyProperties(){
+    public Response<PropertyData> getMyProperties(){
         if (loggedUser.getCurrentUser() == null){
             return new Response<>(
                     true,
@@ -142,7 +190,9 @@ public class PropertyServiceImpl implements PropertyService{
         return new Response<>(
                 true,
                 ResponseCode.SUCCESS,
-                propertyRepository.findAllByOwnerIdInAndActiveTrue(myGroupsIds),
+                propertyRepository.findAllByOwnerIdInAndActiveTrue(myGroupsIds).stream()
+                        .map(this::convertToDto)
+                        .collect(Collectors.toList()),
                 "Success"
         );
     }
@@ -177,5 +227,13 @@ public class PropertyServiceImpl implements PropertyService{
         else {
             return new Response<>(false, ResponseCode.NO_RECORD_FOUND,Collections.emptyList(),"Property could not be found or may have been deleted from the system");
         }
+    }
+
+    private PropertyData convertToDto(Property property) {
+        PropertyData dto = new PropertyData();
+        BeanUtils.copyProperties(property, dto);
+        dto.setLocation(property.getVillage().getName());
+        dto.setCurrency(property.getCurrency().getCode());
+        return dto;
     }
 }

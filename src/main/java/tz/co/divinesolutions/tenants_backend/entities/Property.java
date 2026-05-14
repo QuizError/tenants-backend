@@ -25,7 +25,6 @@ public class Property extends BaseEntity {
     private Long agentId;
     private LocalDate startFunction;
     private LocalDate endFunction;
-    private String location;
     private String contactPersonMobile;
     private String contactPersonEmail;
 
@@ -45,4 +44,12 @@ public class Property extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private PropertyOwnershipType ownershipType;
+
+    private Long regionId;
+    private Long districtId;
+    private Long wardId;
+
+    @ManyToOne
+    @JoinColumn(name = "village_id")
+    private Village village;
 }

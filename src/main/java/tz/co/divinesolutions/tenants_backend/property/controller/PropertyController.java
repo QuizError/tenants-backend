@@ -2,9 +2,9 @@ package tz.co.divinesolutions.tenants_backend.property.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import tz.co.divinesolutions.tenants_backend.entities.Property;
 import tz.co.divinesolutions.tenants_backend.globals.Response;
 import tz.co.divinesolutions.tenants_backend.property.dto.BroadcastDto;
+import tz.co.divinesolutions.tenants_backend.property.dto.PropertyData;
 import tz.co.divinesolutions.tenants_backend.property.dto.PropertyDto;
 import tz.co.divinesolutions.tenants_backend.property.service.PropertyService;
 import tz.co.divinesolutions.tenants_backend.sms.dto.SMSDto;
@@ -20,27 +20,27 @@ public class PropertyController {
     private PropertyService propertyService;
 
     @PostMapping
-    public Response<Property> save(@RequestBody PropertyDto dto){
+    public Response<PropertyData> save(@RequestBody PropertyDto dto){
         return propertyService.save(dto);
     }
 
     @GetMapping("{uid}")
-    public Response<Property> save(@PathVariable UUID uid){
+    public Response<PropertyData> save(@PathVariable UUID uid){
         return propertyService.findByUid(uid);
     }
 
     @DeleteMapping("{uid}")
-    public Response<Property> delete(@PathVariable UUID uid){
+    public Response<PropertyData> delete(@PathVariable UUID uid){
         return propertyService.delete(uid);
     }
 
     @GetMapping
-    public List<Property> userList(){
+    public Response<PropertyData> userList(){
         return propertyService.properties();
     }
 
-    @GetMapping("/user/{uid}")
-    public Response<Property> myProperties(@PathVariable UUID uid){
+    @GetMapping("/user")
+    public Response<PropertyData> myProperties(){
         return propertyService.getMyProperties();
     }
 
