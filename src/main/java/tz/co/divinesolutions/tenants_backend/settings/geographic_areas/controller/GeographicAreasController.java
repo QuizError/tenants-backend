@@ -56,9 +56,9 @@ public class GeographicAreasController {
     }
 
     @GetMapping("/seed-villages/{wardUid}")
-    public Response<AreaData> seedWardVillagesAndStreets(@PathVariable UUID wardUid){
+    public Response<AreaData> seedWardVillagesAndStreets(@PathVariable UUID uid){
         try {
-            return geographicAreasService.seedWardVillagesAndStreets(wardUid);
+            return geographicAreasService.seedWardVillagesAndStreets(uid);
         }
         catch (Exception e){
             return new Response<>(
