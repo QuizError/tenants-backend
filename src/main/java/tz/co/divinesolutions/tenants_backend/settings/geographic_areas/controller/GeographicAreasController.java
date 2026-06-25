@@ -26,9 +26,9 @@ public class GeographicAreasController {
     }
 
     @GetMapping("/seed-districts/{regionUid}")
-    public Response<AreaData> seedRegionDistrict(@PathVariable UUID uid){
+    public Response<AreaData> seedRegionDistrict(@PathVariable UUID regionUid){
         try {
-            return geographicAreasService.seedRegionDistrict(uid);
+            return geographicAreasService.seedRegionDistrict(regionUid);
         }
         catch (Exception e){
             return new Response<>(
@@ -41,9 +41,9 @@ public class GeographicAreasController {
     }
 
     @GetMapping("/seed-wards/{districtUid}")
-    public Response<AreaData> seedDistrictWards(@PathVariable UUID uid){
+    public Response<AreaData> seedDistrictWards(@PathVariable UUID districtUid){
         try {
-            return geographicAreasService.seedDistrictWards(uid);
+            return geographicAreasService.seedDistrictWards(districtUid);
         }
         catch (Exception e){
             return new Response<>(
@@ -56,9 +56,9 @@ public class GeographicAreasController {
     }
 
     @GetMapping("/seed-villages/{wardUid}")
-    public Response<AreaData> seedWardVillagesAndStreets(@PathVariable UUID uid){
+    public Response<AreaData> seedWardVillagesAndStreets(@PathVariable UUID wardUid){
         try {
-            return geographicAreasService.seedWardVillagesAndStreets(uid);
+            return geographicAreasService.seedWardVillagesAndStreets(wardUid);
         }
         catch (Exception e){
             return new Response<>(

@@ -9,7 +9,6 @@ import tz.co.divinesolutions.tenants_backend.property.dto.PropertyDto;
 import tz.co.divinesolutions.tenants_backend.property.service.PropertyService;
 import tz.co.divinesolutions.tenants_backend.sms.dto.SMSDto;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
