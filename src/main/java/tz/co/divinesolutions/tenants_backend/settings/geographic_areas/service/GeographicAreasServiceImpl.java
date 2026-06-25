@@ -282,6 +282,7 @@ public class GeographicAreasServiceImpl implements GeographicAreasService{
         AreaData dto = new AreaData();
         BeanUtils.copyProperties(entity, dto);
         dto.setParent(entity.getParentName());
+        dto.setUid(entity.getUid());
         return dto;
     }
 
